@@ -1,16 +1,33 @@
 //--------------------------Score-------------------------------
-class Score {
-  private static instance:Score
+interface Scoreable {
+  readonly totalScore: number;
+  render(): void;
+}
+
+interface Foodable {
+  element: HTMLDivElement;
+  clickEventHandler(): void;
+}
+
+interface Foodsable {
+  elements: NodeListOf<HTMLDivElement>;
+  readonly activeElements: HTMLDivElement[];
+  readonly activeElementsScore: number[];
+}
+class Score implements Scoreable {
+  private static instance: Score;
   get totalScore() {
     const foods = Foods.getInstance();
     return foods.activeElementsScore.reduce((total, score) => total + score, 0);
   }
 
   render() {
-    document.querySelector('.score__number')!.textContent = String(this.totalScore);
+    document.querySelector(".score__number")!.textContent = String(
+      this.totalScore
+    );
   }
 
-  private constructor() { }
+  private constructor() {}
   static getInstance() {
     if (!Score.instance) {
       Score.instance = new Score();
@@ -20,7 +37,7 @@ class Score {
 }
 
 //--------------------------Food-------------------------------
-class Food {
+class Food implements Foodable {
   constructor(public element: HTMLDivElement) {
     //.bindで
     element.addEventListener("click", this.clickEventHandler.bind(this));
@@ -29,11 +46,11 @@ class Food {
   clickEventHandler() {
     this.element.classList.toggle("food-active");
     const score = Score.getInstance();
-    score.render()
+    score.render();
   }
 }
 //--------------------------Foods-------------------------------
-class Foods {
+class Foods implements Foodsable {
   private static instance: Foods;
   //foodをすべて取得
   elements = document.querySelectorAll<HTMLDivElement>(".food");

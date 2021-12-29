@@ -1,13 +1,21 @@
 "use strict";
 class Score {
+    constructor() { }
     get totalScore() {
         const foods = Foods.getInstance();
         return foods.activeElementsScore.reduce((total, score) => total + score, 0);
     }
     render() {
-        document.querySelector('.score__number').textContent = String(this.totalScore);
+        document.querySelector(".score__number").textContent = String(this.totalScore);
+    }
+    static getInstance() {
+        if (!Score.instance) {
+            Score.instance = new Score();
+        }
+        return Score.instance;
     }
 }
+//--------------------------Food-------------------------------
 class Food {
     constructor(element) {
         this.element = element;
@@ -15,15 +23,17 @@ class Food {
         element.addEventListener("click", this.clickEventHandler.bind(this));
     }
     clickEventHandler() {
-        console.log(this);
         this.element.classList.toggle("food-active");
-        const score = new Score();
+        const score = Score.getInstance();
         score.render();
     }
 }
+//--------------------------Foods-------------------------------
 class Foods {
     constructor() {
+        //foodをすべて取得
         this.elements = document.querySelectorAll(".food");
+        //初期化
         this._activeElements = [];
         this._activeElementsScore = [];
         this.elements.forEach((element) => {
@@ -31,6 +41,7 @@ class Foods {
             new Food(element);
         });
     }
+    //getter
     get activeElements() {
         this._activeElements = [];
         this.elements.forEach((element) => {
