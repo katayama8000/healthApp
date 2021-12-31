@@ -1,4 +1,4 @@
-//--------------------------Score-------------------------------
+//--------------------------------interface-----------------------------------------
 interface Scoreable {
   readonly totalScore: number;
   render(): void;
@@ -14,6 +14,8 @@ interface Foodsable {
   readonly activeElements: HTMLDivElement[];
   readonly activeElementsScore: number[];
 }
+
+//--------------------------Score-------------------------------
 class Score implements Scoreable {
   private static instance: Score;
   get totalScore() {
@@ -45,20 +47,24 @@ class Food implements Foodable {
 
   clickEventHandler() {
     this.element.classList.toggle("food-active");
+    //Scoreクラスのstaticメソッド,インスタンス化する
     const score = Score.getInstance();
+    //scoreを描写
     score.render();
   }
 }
 //--------------------------Foods-------------------------------
 class Foods implements Foodsable {
+  //プロパティinstanceの型がclassのFoods
   private static instance: Foods;
   //foodをすべて取得
   elements = document.querySelectorAll<HTMLDivElement>(".food");
-  //初期化
+  //初期化,配列を用意
   private _activeElements: HTMLDivElement[] = [];
   private _activeElementsScore: number[] = [];
 
   //getter
+  //foods-acitiveを1つずつ配列に格納
   get activeElements() {
     this._activeElements = [];
     this.elements.forEach((element) => {
@@ -69,6 +75,7 @@ class Foods implements Foodsable {
     return this._activeElements;
   }
 
+  //上のgetterでできた配列のスコアを配列に格納
   get activeElementsScore() {
     this._activeElementsScore = [];
     this.activeElements.forEach((element) => {
@@ -79,6 +86,8 @@ class Foods implements Foodsable {
     });
     return this._activeElementsScore;
   }
+
+
   private constructor() {
     this.elements.forEach((element) => {
       //Foodのインスタンス化、引数element
@@ -86,6 +95,8 @@ class Foods implements Foodsable {
     });
   }
 
+  //staticインスタンス化せずに使える
+  //new Foodsを一回のみ実行する処理
   static getInstance() {
     if (!Foods.instance) {
       Foods.instance = new Foods();
